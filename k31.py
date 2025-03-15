@@ -1,5 +1,5 @@
 import random
-lenstr = int(input("Length of the string of numbers:"))
+lenstr = int(input("Length of the string of numbers: "))
 
 
 rand_list = []
@@ -9,12 +9,19 @@ for x in range(lenstr):
 
 rand_str = ''.join(str(x) for x in rand_list)
 
-#child_value = [int, string, int]
+intturn = int(input("Turn 1 for P1, 0 for P2: "))
+if intturn == 0:
+    turn = False
+else:
+    turn = True
+
+print(turn)
+
 class Node:
     def __init__(self, child_value):
         self.value = child_value
         self.children = []
-
+        
     def add_node(self,child):
         self.children.append(child)
 
@@ -22,22 +29,22 @@ root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100})
 print(root.value)
 
 
-def calculate_score(curr_node,chosen_value):
+def calculate_score(curr_node,chosen_value,turn):
     x = curr_node.value.copy()
     y = curr_node.value["StateString"].copy()
     child = Node({"P1Score": x["P1Score"], "StateString":y, "P2Score": x["P2Score"]})
 
-    # if turn == True:
-    if chosen_value%2 == 0:
-        child.value["P1Score"] -= 2*chosen_value
-    else:
-        child.value["P2Score"] += chosen_value
+    if turn == True:
+        if chosen_value%2 == 0:
+            child.value["P1Score"] -= 2*chosen_value
+        else:
+            child.value["P2Score"] += chosen_value
 
-    # else:
-    #     if chosen_value%2 == 0:
-    #         child.value["P2Score"] -= 2*chosen_value
-    #     else:
-    #         child.value["P1Score"] += chosen_value
+    else:
+        if chosen_value%2 == 0:
+            child.value["P2Score"] -= 2*chosen_value
+        else:
+            child.value["P1Score"] += chosen_value
 
     y.remove(chosen_value)
     child.value["StateString"] = y
@@ -47,25 +54,26 @@ def calculate_score(curr_node,chosen_value):
 
 
 
-#turn = True
-
 def generate_list(curr_node):
-    #global turn
-    if(curr_node == None):
-        return
-
+    global turn
     curr_list = curr_node.value["StateString"]
 
     if(len(curr_list) == 0):
         return
     
     avail_options = set(curr_node.value["StateString"])
-    for i in range(len(avail_options)):
-        for option in list(avail_options):
-            child = calculate_score(curr_node,option)
-            generate_list(child)
-            print(child.value)
-        #turn = not turn
+    for i in (avail_options):
+
+        if len(root.value["StateString"]) == len(curr_node.value["StateString"]):
+            turn = turn
+        else:
+            turn = not turn
+
+        child = calculate_score(curr_node,i,turn)
+        print(child.value)
+        generate_list(child)
+            
+
     return
 
 generate_list(root)
