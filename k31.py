@@ -15,8 +15,6 @@ if intturn == 0:
 else:
     turn = True
 
-print(turn)
-
 class Node:
     def __init__(self, child_value):
         self.value = child_value
@@ -61,6 +59,8 @@ def generate_list(curr_node):
     if(len(curr_list) == 0):
         return
     
+
+    
     avail_options = set(curr_node.value["StateString"])
     for i in (avail_options):
 
@@ -77,6 +77,4 @@ def generate_list(curr_node):
     return
 
 generate_list(root)
-
-print(root.children[0].value["StateString"])
     
