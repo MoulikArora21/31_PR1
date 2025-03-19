@@ -7,9 +7,9 @@ x = 0
 for x in range(lenstr):
     rand_list.append(random.randint(1,4))
 
-rand_str = ''.join(str(x) for x in rand_list)
+#rand_str = ''.join(str(x) for x in rand_list)
 
-intturn = int(input("Turn 1 for P1, 0 for P2: "))
+intturn = int(input("Choose 1 for P1, 0 for P2: "))
 if intturn == 0:
     turn = False
 else:
@@ -19,9 +19,23 @@ class Node:
     def __init__(self, child_value):
         self.value = child_value
         self.children = []
+        self.heuristic = 0
         
     def add_node(self,child):
         self.children.append(child)
+
+
+    def add_heuristic(self):
+        hv = 0
+        for values in self.value["StateString"] :
+            if values%2 == 0:
+                hv +=1
+
+            if values%3 == 0 or values%4 == 0:
+                hv +=1
+        self.heuristic=hv
+            
+        
 
 root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100})
 print(root.value)
@@ -48,6 +62,7 @@ def calculate_score(curr_node,chosen_value,turn):
     child.value["StateString"] = y
 
     curr_node.add_node(child)
+    child.add_heuristic()
     return child
 
 
@@ -71,10 +86,10 @@ def generate_list(curr_node):
 
         child = calculate_score(curr_node,i,turn)
         print(child.value)
+        print(child.heuristic)
         generate_list(child)
             
 
     return
 
-generate_list(root)
-    
+generate_list(root) 
