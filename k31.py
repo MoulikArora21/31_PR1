@@ -114,7 +114,8 @@ def generate_list(curr_node):
     if(len(curr_list) == 0):
         return
     
-
+    if (curr_node.value["Depth"] > max_depth ):
+        return
     
     avail_options = set(curr_node.value["StateString"])
     for i in (avail_options):
@@ -122,8 +123,7 @@ def generate_list(curr_node):
 
         child = calculate_score(curr_node,i)
         # print(child.value)
-        if (child.value["Depth"] > max_depth ):
-            return
+
 
         generate_list(child)
         # print(f"Current Node: {curr_node.value}, Generated Child Node: {child.value}")
@@ -193,11 +193,12 @@ minmax(root,root)
 
 
 def computer_move(node):
-    # if (node.value["StateString"] == []):
-    #     return None
 
-    # if node.children == None:
-    #     return None
+    if (node.value["StateString"] == []):
+        return None
+
+    if node.children == None:
+        return None
 
     bestmove = None
     bestheur = -float("inf")
@@ -208,16 +209,16 @@ def computer_move(node):
 
     for options in node.children:
          if options.heuristic==bestheur:
-            print(options.value, options.heuristic)
+            print(options.value)
     return bestmove
     
         
 def player_move(node):
-    # if (node.value["StateString"] == []):
-    #     return None
+    if (node.value["StateString"] == []):
+        return None
 
-    # if node.children == None:
-    #     return None
+    if node.children == None:
+        return None
     print("Choose a number")
     choice = int(input())
     temp_list = node.value["StateString"].copy()
@@ -232,13 +233,12 @@ def generate_further(node,root):
     global max_depth
     max_depth +=4
     generate_list(node)
-    print(node.value, node.children[0])
     minmax(node,root)
     return node
 
 actual_root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
 if intturn == 1:
-    while root.value["StateString"] != [] or root!= None:
+    while root!= None and root.value["StateString"] != [] :
         x = player_move(root)
         if (x == None or x.value["StateString"] == []):
             break
@@ -247,21 +247,26 @@ if intturn == 1:
             break
         z = player_move(y)
         a = generate_further(z,actual_root)
+        if (a == None or a.value["StateString"] == []):
+            break
         w = computer_move(a)
         if (w == None or w.value["StateString"] == []):
             break
         root = w
 
 else:
-    while root.value["StateString"] != [] and root!= None:
+    while root!= None and root.value["StateString"] != [] :
         x = computer_move(root)
         # if (x == None or x.value["StateString"] == []):
         #     break
         y = player_move(x)
-        # if (y == None or y.value["StateString"] == []):
-        #     break
-        z = computer_move(y)
-        a = generate_further(z,actual_root)
-        w = player_move(a)
+        if (y == None or y.value["StateString"] == []):
+            break
+        
+        a = generate_further(y,actual_root)
+        if (a == None or a.value["StateString"] == []):
+            break
+        z = computer_move(a)
+        w = player_move(z)
         root = w
 
