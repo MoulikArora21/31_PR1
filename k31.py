@@ -24,7 +24,8 @@ class Node:
 
     def add_heuristic(self):
         hv = 0
-        if (self.value["StateString"] != []):
+        # print(f"Calculating heuristic for {self.value}")
+        if self.value["StateString"]:
             for values in self.value["StateString"] :
                 if values%2 == 0:
                     hv +=1
@@ -36,8 +37,9 @@ class Node:
                 hv+=dif
             else:
                 dif = self.value["P2Score"] - self.value["P1Score"] 
-                hv+=dif
+                hv+=dif*1.5
             self.heuristic=hv
+            # print(f"Assigned heuristic {hv} to {self.value}")
         else:
             if((self.value["P1Score"] - self.value["P2Score"]) < 0):
                 if intturn == 1:
@@ -51,6 +53,7 @@ class Node:
                     self.heuristic = 1
                 else:
                     self.heuristic = -1
+            # print(f"Terminal heuristic {self.heuristic} to {self.value}")
         
             
         
@@ -118,6 +121,9 @@ def generate_list(curr_node):
         return
     
     avail_options = set(curr_node.value["StateString"])
+
+    if not avail_options:
+        return
     for i in (avail_options):
             
 
@@ -143,46 +149,65 @@ def add_heuristic_to_leaves(root):
 
 def propagate(node,root):
     if (len(node.value["StateString"])%2 == len(root.value["StateString"])%2):
+        if not node.children:
+            node.add_heuristic()
+            return
         for w in node.children:
-            for x in w.children:
-                maxh = -float('inf')
-                for y in x.children:
-                    if y.heuristic>maxh:
-                        maxh = y.heuristic
-                x.heuristic = maxh
-                #print(x.value , x.heuristic)
-            maxh2 = float('inf')
-            for x in w.children:
-                if x.heuristic<maxh2:
-                    maxh2 = x.heuristic
-            w.heuristic = maxh2
-            #print(w.value , w.heuristic)
+            if not w.children:
+                w.add_heuristic()
+            else:
+                for x in w.children:
+                    if not x.children:
+                        x.add_heuristic()
+                    else:
+                        maxh = -float('inf')
+                        for y in x.children:
+                            if y.heuristic>maxh:
+                                maxh = y.heuristic
+                        x.heuristic = maxh
+                # print("maximizing",x.value , x.heuristic)
+                maxh2 = float('inf')
+                for x in w.children:
+                    if x.heuristic<maxh2:
+                        maxh2 = x.heuristic
+                w.heuristic = maxh2
+            # print("minimizing",w.value , w.heuristic)
         maxh3 = -float('inf')
         for w in node.children:
             if w.heuristic>maxh3:
                 maxh3 = w.heuristic
         node.heuristic = maxh3
-        # print(root.value , root.heuristic)
-    else:
+        # print("maximizing",node.value , node.heuristic)
+    else: 
+        if not node.children:
+            node.add_heuristic()
+            return
         for w in node.children:
-            for x in w.children:
-                maxh = float('inf')
-                for y in x.children:
-                    if y.heuristic<maxh:
-                        maxh = y.heuristic
-                x.heuristic = maxh
-                #print(x.value , x.heuristic)
-            maxh2 = -float('inf')
-            for x in w.children:
-                if x.heuristic>maxh2:
-                    maxh2 = x.heuristic
-            w.heuristic = maxh2
-            #print(w.value , w.heuristic)
+            if not w.children:
+                w.add_heuristic()
+            else:
+                for x in w.children:
+                    maxh = float('inf')
+                    for y in x.children:
+                        if not x.children:
+                            x.add_heuristic()
+                        else:
+                            if y.heuristic < maxh:
+                                maxh = y.heuristic
+                    x.heuristic = maxh
+                    # print("minimizing",x.value, x.heuristic)
+                maxh2 = -float('inf')
+                for x in w.children:
+                    if x.heuristic > maxh2:
+                        maxh2 = x.heuristic
+                w.heuristic = maxh2
+                # print("maximizing",w.value, w.heuristic)
         maxh3 = float('inf')
         for w in node.children:
-            if w.heuristic<maxh3:
+            if w.heuristic < maxh3:
                 maxh3 = w.heuristic
         node.heuristic = maxh3
+        # print("minimizing",node.value , node.heuristic)
                         
 
 def minmax(node,root):
@@ -193,7 +218,8 @@ minmax(root,root)
 
 
 def computer_move(node):
-
+    # print(f"Current state: {node.value}")
+    # print(f"Children: {[(child.value,node.heuristic) for child in node.children]}")
     if (node.value["StateString"] == []):
         return None
 
@@ -207,9 +233,11 @@ def computer_move(node):
             bestheur = x.heuristic
             bestmove = x
 
-    for options in node.children:
-         if options.heuristic==bestheur:
-            print(options.value)
+    # for options in node.children:
+    #      if options.heuristic==bestheur:
+    #         print(options.value)
+
+    print(bestmove.value)
     return bestmove
     
         
@@ -239,34 +267,60 @@ def generate_further(node,root):
 actual_root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
 if intturn == 1:
     while root!= None and root.value["StateString"] != [] :
+
+        # x = player_move(root)
+        # if (x == None or x.value["StateString"] == []):
+        #     break
+        # y = computer_move(x)
+        # if (y == None or y.value["StateString"] == []):
+        #     break
+        # z = player_move(y)
+        # a = generate_further(z,actual_root)
+        # if (a == None or a.value["StateString"] == []):
+        #     break
+        # w = computer_move(a)
+        # if (w == None or w.value["StateString"] == []):
+        #     break
+        # root = w
+
+
+
         x = player_move(root)
-        if (x == None or x.value["StateString"] == []):
-            break
-        y = computer_move(x)
-        if (y == None or y.value["StateString"] == []):
-            break
-        z = player_move(y)
-        a = generate_further(z,actual_root)
-        if (a == None or a.value["StateString"] == []):
-            break
-        w = computer_move(a)
-        if (w == None or w.value["StateString"] == []):
-            break
-        root = w
+        if not x.children:
+            a = generate_further(x,actual_root)
+            x = a
+            root = a
+            continue
+        root = computer_move(x)
+        if not root.children:
+            a = generate_further(root,actual_root)
+            root = a
+
 
 else:
     while root!= None and root.value["StateString"] != [] :
-        x = computer_move(root)
-        # if (x == None or x.value["StateString"] == []):
-        #     break
-        y = player_move(x)
-        if (y == None or y.value["StateString"] == []):
-            break
+    #     x = computer_move(root)
+    #     # if (x == None or x.value["StateString"] == []):
+    #     #     break
+    #     y = player_move(x)
+    #     if (y == None or y.value["StateString"] == []):
+    #         break
         
-        a = generate_further(y,actual_root)
-        if (a == None or a.value["StateString"] == []):
-            break
-        z = computer_move(a)
-        w = player_move(z)
-        root = w
+    #     a = generate_further(y,actual_root)
+    #     if (a == None or a.value["StateString"] == []):
+    #         break
+    #     z = computer_move(a)
+    #     w = player_move(z)
+    #     root = w
 
+    
+        x = computer_move(root)
+        if not x.children:
+            a = generate_further(x,actual_root)
+            x = a
+            root = a
+            continue
+        root = player_move(x)
+        if not root.children:
+            a = generate_further(root,actual_root)
+            root = a
