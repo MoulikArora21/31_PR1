@@ -10,12 +10,15 @@ for x in range(lenstr):
 #rand_str = ''.join(str(x) for x in rand_list)
 
 intturn = int(input("Choose 1 for Your Turn, 0 for Computer's Turn: "))
+intalgo= int(input("Choose 1 for MinMax, 0 for AlphaBeta"))
+
 
 class Node:
     def __init__(self, child_value):
         self.value = child_value
         self.children = []
         self.heuristic = 0
+        self.evaluated = False
 
         
     def add_node(self,child):
@@ -34,7 +37,7 @@ class Node:
                     hv +=1
             if intturn == 1:
                 dif = self.value["P2Score"] - self.value["P1Score"] 
-                hv+=dif
+                hv+=dif*1.5
             else:
                 dif = self.value["P2Score"] - self.value["P1Score"] 
                 hv+=dif*1.5
@@ -268,8 +271,9 @@ def generate_further(node,root):
     return node
 
 actual_root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
-if intturn == 1:
-    while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
+if intalgo == 1:
+    if intturn == 1 :
+        while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
 
         # x = player_move(root)
         # if (x == None or x.value["StateString"] == []):
@@ -288,24 +292,24 @@ if intturn == 1:
 
 
 
-        x = player_move(root)
-        if x is None:
-            break
-        elif not x.children:
-            a = generate_further(x,actual_root)
-            x = a
-            root = a
-            continue
-        root = computer_move(x)
-        if root is None:
-            break
-        elif not root.children:
-            a = generate_further(root,actual_root)
-            root = a
+            x = player_move(root)
+            if x is None:
+                break
+            elif not x.children:
+                a = generate_further(x,actual_root)
+                x = a
+                root = a
+                continue
+            root = computer_move(x)
+            if root is None:
+                break
+            elif not root.children:
+                a = generate_further(root,actual_root)
+                root = a
 
 
-else:
-    while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
+    else:
+        while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
     #     x = computer_move(root)
     #     # if (x == None or x.value["StateString"] == []):
     #     #     break
@@ -321,19 +325,184 @@ else:
     #     root = w
 
     
-        x = computer_move(root)
+            x = computer_move(root)
 
-        if x is None:
-            break
-        elif not x.children:
-            a = generate_further(x,actual_root)
-            x = a
-            root = a
-            continue
+            if x is None:
+                break
+            elif not x.children:
+                a = generate_further(x,actual_root)
+                x = a
+                root = a
+                continue
 
-        root = player_move(x)
-        if root is None:
-            break
-        elif not root.children:
-            a = generate_further(root,actual_root)
-            root = a
+            root = player_move(x)
+            if root is None:
+                break
+            elif not root.children:
+                a = generate_further(root,actual_root)
+                root = a
+
+else:
+    # n = 0
+    # def go_to_depth(node,d):
+    #     global n
+    #     if node is not None and node.children and node.value["Depth"]< d:
+    #         return go_to_depth(node.children[n],d)       
+    #     else:
+    #         if node.evaluated == True:
+    #             n+=1
+    #             go_to_depth(node.children[n],d)
+    #         else:
+    #             node.add_heuristic()
+    #             node.evaluated = True
+    #             return node
+   
+    # generate_list(actual_root)
+
+    # def propagate_up(node):
+    #     global alpha
+    #     global beta
+    #     allchildren_evaluated = True
+    #     parent_node = go_to_depth(node,node.value["Depth"]-1)
+    #     for children in parent_node.children:
+    #         allchildren_evaluated = allchildren_evaluated and children.evaluated
+    #     if allchildren_evaluated is True:
+    #         if len(parent_node.value["StateString"])%2 == len(actual_root.value["StateString"])%2: #Maximizer
+    #             max_heur = -float("inf")
+    #             for children in parent_node.children:
+    #                 if children.heuristic > max_heur:
+    #                     max_heur = children.heuristic
+    #                     print(max_heur)
+    #             parent_node.heuristic = max_heur
+    #             parent_node.evaluated = True
+    #             print(parent_node.heuristic)
+    #         else:
+    #             min_heur = float("inf")
+    #             for children in parent_node.children:
+    #                 if children.heuristic < min_heur:
+    #                     min_heur = children.heuristic
+    #                     print(min_heur)
+    #             parent_node.heuristic = min_heur
+    #             parent_node.evaluated = True
+    #             print(parent_node.heuristic)
+
+
+    #     else:
+    #         if len(parent_node.value["StateString"])%2 == len(actual_root.value["StateString"])%2: #Beta Level
+    #             max_heur = -float("inf")
+    #             for children in parent_node.children:
+    #                 if children.evaluated == True:
+    #                     if children.heuristic > max_heur:
+    #                         max_heur = children.heuristic
+    #                         print(max_heur)
+    #             if max_heur != -float("inf"):
+    #                 alpha = max_heur
+    #                 print(alpha)
+    #                 if beta is not None:
+    #                     if alpha>=beta:
+    #                         parent_node.add_heuristic(alpha)
+    #                         alpha = None
+    #                     else:
+    #                         go_to_depth(parent_node,parent_node.value["Depth"])
+
+    #         else: #Alpha level
+    #             min_heur = float("inf")
+    #             for children in parent_node.children:
+    #                 if children.evaluated == True:
+    #                     if children.heuristic < min_heur:
+    #                         min_heur = children.heuristic
+    #                         print(min_heur)
+    #             if min_heur != float("inf"):
+    #                 beta = min_heur
+    #                 print(beta)
+    #                 if alpha is not None:
+    #                     if beta <= alpha:
+    #                         parent_node.add_heuristic(beta)
+    #                         beta= None
+    #                     else:
+    #                         go_to_depth(parent_node,parent_node.value["Depth"])
+
+
+
+            
+
+
+    # propagate_up(actual_root)
+  # Alpha-Beta
+    def alphabeta(node, alpha, beta):
+        if not node.children:
+            node.add_heuristic()
+            node.evaluated = True
+            return node.heuristic
+
+        if len(node.value["StateString"])%2 == len(actual_root.value["StateString"])%2:
+            max_heu = -float("inf")
+            for child in node.children:
+                heu = alphabeta(child, alpha, beta)
+                max_heu = max(max_heu, heu)
+                alpha = max(alpha, heu)
+                if beta <= alpha:
+                    break
+            node.heuristic = max_heu
+            node.evaluated = True
+            return max_heu
+        else:
+            min_heu = float("inf")
+            for child in node.children:
+                heu = alphabeta(child, alpha, beta)
+                min_heu = min(min_heu, heu)
+                beta = min(beta, heu)
+                if beta <= alpha:
+                    break
+            node.heuristic = min_heu
+            node.evaluated = True
+            return min_heu
+
+    # Build the tree and run alpha-beta
+
+
+
+def generate_further2(node,root):
+    global max_depth
+    max_depth +=4
+    generate_list(node)
+    alphabeta(node, -float("inf"), float("inf"))
+    return node
+
+actual_root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
+if intturn == 1 :
+    while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
+            x = player_move(root)
+            if x is None:
+                break
+            elif not x.children:
+                a = generate_further2(x,actual_root)
+                x = a
+                root = a
+                continue
+            root = computer_move(x)
+            if root is None:
+                break
+            elif not root.children:
+                a = generate_further2(root,actual_root)
+                root = a
+
+
+else:
+        while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
+            x = computer_move(root)
+
+            if x is None:
+                break
+            elif not x.children:
+                a = generate_further2(x,actual_root)
+                x = a
+                root = a
+                continue
+
+            root = player_move(x)
+            if root is None:
+                break
+            elif not root.children:
+                a = generate_further2(root,actual_root)
+                root = a
