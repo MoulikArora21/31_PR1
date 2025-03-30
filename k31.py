@@ -111,6 +111,8 @@ def generate_list(curr_node):
     global turn
     global max_depth
 
+    if curr_node is None:
+        return
     
     curr_list = curr_node.value["StateString"]
 
@@ -226,6 +228,7 @@ def computer_move(node):
     if node.children == None:
         return None
 
+
     bestmove = None
     bestheur = -float("inf")
     for x in node.children:
@@ -266,7 +269,7 @@ def generate_further(node,root):
 
 actual_root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
 if intturn == 1:
-    while root!= None and root.value["StateString"] != [] :
+    while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
 
         # x = player_move(root)
         # if (x == None or x.value["StateString"] == []):
@@ -286,19 +289,23 @@ if intturn == 1:
 
 
         x = player_move(root)
-        if not x.children:
+        if x is None:
+            break
+        elif not x.children:
             a = generate_further(x,actual_root)
             x = a
             root = a
             continue
         root = computer_move(x)
-        if not root.children:
+        if root is None:
+            break
+        elif not root.children:
             a = generate_further(root,actual_root)
             root = a
 
 
 else:
-    while root!= None and root.value["StateString"] != [] :
+    while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
     #     x = computer_move(root)
     #     # if (x == None or x.value["StateString"] == []):
     #     #     break
@@ -315,12 +322,18 @@ else:
 
     
         x = computer_move(root)
-        if not x.children:
+
+        if x is None:
+            break
+        elif not x.children:
             a = generate_further(x,actual_root)
             x = a
             root = a
             continue
+
         root = player_move(x)
-        if not root.children:
+        if root is None:
+            break
+        elif not root.children:
             a = generate_further(root,actual_root)
             root = a
