@@ -424,11 +424,6 @@ else:
 
 
 
-            
-
-
-    # propagate_up(actual_root)
-  # Alpha-Beta
     def alphabeta(node, alpha, beta):
         if not node.children:
             node.add_heuristic()
@@ -457,10 +452,6 @@ else:
             node.heuristic = min_heu
             node.evaluated = True
             return min_heu
-
-    # Build the tree and run alpha-beta
-
-
 
 def generate_further2(node,root):
     global max_depth
