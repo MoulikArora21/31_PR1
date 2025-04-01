@@ -7,21 +7,28 @@ import customtkinter
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
-
 # App Frame
 app = customtkinter.CTk()
-app.geometry("720x720")
+app.geometry("750x650")
 app.title("Game")
 
 
 # UI elements
-title = customtkinter.CTkLabel(app,text = "Select Algorithm:")
+title = customtkinter.CTkLabel(app,text = "Select Algorithm:", font = ("Courier New",20))
 title.pack()
 
 intalgo = None
 lenstr = None
 intturn = None
-
+showp1text = None
+showp2text = None
+showp1 = None
+showp2 = None
+showroottxt = None
+showstring = None
+retrybutton = None
+playbutton = None
+win = None
 def setalgo(choice):
     global intalgo
     if choice is "MinMax":
@@ -42,16 +49,16 @@ algo = customtkinter.CTkComboBox(app,values=["MinMax","AlphaBeta"], command=seta
 algo.set("Select")
 algo.pack()
 
-txtlengthask = customtkinter.CTkLabel(app,text="Select length of the string:")
+txtlengthask = customtkinter.CTkLabel(app,text="Select length of the string:", font = ("Courier New",20))
 txtlengthask.pack()
 
 lengthOfString = customtkinter.CTkSlider(app, from_=15, to=25, command= set_lenstr,number_of_steps=10)
 lengthOfString.pack()
 
-txtlength = customtkinter.CTkLabel(app,text="")
+txtlength = customtkinter.CTkLabel(app,text="", font = ("Courier New",20))
 txtlength.pack()
 
-txtlengthturn = customtkinter.CTkLabel(app,text="Choose Turn:")
+txtlengthturn = customtkinter.CTkLabel(app,text="Choose Turn:", font = ("Courier New",20))
 txtlengthturn.pack()
 
 intturn_var = tkinter.IntVar(value=0)
@@ -61,17 +68,26 @@ def set_intturn():
     intturn = intturn_var.get()
     print(intturn)
 
-turnbutton1 = customtkinter.CTkRadioButton(app, text="Player", command = set_intturn, variable= intturn_var, value= 1)
-turnbutton2 = customtkinter.CTkRadioButton(app, text="Computer", command = set_intturn,variable= intturn_var, value= 0)
+turnbutton1 = customtkinter.CTkRadioButton(app, text="Player", command = set_intturn, variable= intturn_var, value= 1, font = ("Courier New",20))
+turnbutton2 = customtkinter.CTkRadioButton(app, text="Computer", command = set_intturn,variable= intturn_var, value= 0, font = ("Courier New",20))
 turnbutton1.pack()
 turnbutton2.pack()
 
 
+def retryactivate():
+    global retrybutton
+    retrybutton = customtkinter.CTkButton(app,text= "Retry", command = resetgame, font = ("Courier New",20))
+    retrybutton.place(x=300,y=600)
 
 playeroptions = None
 playerchoice = tkinter.IntVar()
 
 # lenstr = int(input("Length of the string of numbers: "))
+
+
+
+
+
 
 def startgame():
     global lenstr
@@ -135,33 +151,45 @@ def startgame():
                 # print(f"Terminal heuristic {self.heuristic} to {self.value}")
             
                 
-            
+    global showp1text
+    global showp2text
+    global showp1
+    global showp2
+    global showroottxt
+    global showstring        
 
     root = Node({"P1Score": 100, "StateString": rand_list, "P2Score": 100, "Depth": 1})
     print(root.value)
 
-    showp1text = customtkinter.CTkLabel(app,text="Player Score:")
-    showp1text.pack()
+    showp1text = customtkinter.CTkLabel(app,text="Player Score:", font = ("Courier New",20))
+    showp1text.place(x = 80, y=400 )
+    # showp1text.pack()
 
-    showp1 = customtkinter.CTkLabel(app,text=root.value["P1Score"])
-    showp1.pack()
+    showp1 = customtkinter.CTkLabel(app,text=root.value["P1Score"], font = ("OCR A Extended",25))
+    showp1.place(x= 120,y=430)
 
 
-    showp2text = customtkinter.CTkLabel(app,text="Computer Score:")
-    showp2text.pack()
+    showp2text = customtkinter.CTkLabel(app,text="Computer Score:", font = ("Courier New",20))
+    showp2text.place(x = 450, y=400 )
 
-    showp2 = customtkinter.CTkLabel(app,text=root.value["P2Score"])
-    showp2.pack()
+    showp2 = customtkinter.CTkLabel(app,text=root.value["P2Score"], font = ("OCR A Extended",25))
+    showp2.place(x= 520,y=430)
 
-    showroottxt = customtkinter.CTkLabel(app,text="Randomly generated string:")
-    showroottxt.pack()
+
+    if showroottxt is None:
+        showroottxt = customtkinter.CTkLabel(app,text="Randomly generated string:", font = ("Courier New",20))
+        showroottxt.pack()
+    else:
+        showroottxt.configure(text="Randomly generated string:", font = ("Courier New",20))
 
     
 
 
-
-    showstring = customtkinter.CTkLabel(app,text=root.value["StateString"])
-    showstring.pack()
+    if showstring is None:
+        showstring = customtkinter.CTkLabel(app,text=root.value["StateString"], font = ("OCR A Extended",25))
+        showstring.pack()
+    else:
+        showstring.configure(text=root.value["StateString"], font = ("OCR A Extended",25))
 
 
     def calculate_score(curr_node,chosen_value):
@@ -324,9 +352,25 @@ def startgame():
 
 
     def computer_move(node):
+        global win
+        if win is not None:
+            win.destroy()
         # print(f"Current state: {node.value}")
         # print(f"Children: {[(child.value,node.heuristic) for child in node.children]}")
         if (node.value["StateString"] == []):
+            if node.value["P1Score"] > node.value["P2Score"]:
+                win=customtkinter.CTkLabel(app, text = "Player Wins!", font = ("Courier New",20))
+                win.place(x=290,y=550)
+                print("Player Wins!")
+            elif node.value["P1Score"] < node.value["P2Score"]:
+                win=customtkinter.CTkLabel(app, text = "Computer Wins!", font = ("Courier New",20))
+                win.place(x=290,y=550)
+                print("Computer Wins!")
+                
+            else:
+                win=customtkinter.CTkLabel(app, text = "Draw!", font = ("Courier New",20))
+                win.place(x=300,y=550)
+                print("Draw!")
             return None
 
         if node.children == None:
@@ -358,14 +402,34 @@ def startgame():
     def player_move(node):
         global playerchoice
         global playeroptions
+        global win
+        if win is not None:
+            win.destroy()
         if (node.value["StateString"] == []):
+            playeroptions.set("") 
+            # if win:
+            #     win.destroy() 
+            if node.value["P1Score"] > node.value["P2Score"]:
+                win=customtkinter.CTkLabel(app, text = "Player Wins!", font = ("Courier New",20))
+                win.place(x=290,y=550)
+                print("Player Wins!")
+            elif node.value["P1Score"] < node.value["P2Score"]:
+                win=customtkinter.CTkLabel(app, text = "Computer Wins!", font = ("Courier New",20))
+                win.place(x=290,y=550)
+                print("Computer Wins!")
+                
+            else:
+                win=customtkinter.CTkLabel(app, text = "Draw!", font = ("Courier New",20))
+                win.place(x=300,y=550)
+                print("Draw!")
+            
             return None
 
         if node.children == None:
             return None
         # print("Choose a number")
         # playerchoice = int(input())
-
+        
 
         if playeroptions is None: 
             playeroptions = customtkinter.CTkComboBox(app,values=[str(v) for v in set(node.value["StateString"])],command=setoption)
@@ -628,8 +692,48 @@ def startgame():
                 elif not root.children:
                     a = generate_further2(root,actual_root)
                     root = a
+    retryactivate()
 
-playbutton = customtkinter.CTkButton(app,text = "Play", command = startgame)
-playbutton.pack()
+
+def selection():
+    global playbutton
+    if  playbutton is None:
+        playbutton = customtkinter.CTkButton(app,text = "Play", command = startgame, font = ("Courier New",20))
+        playbutton.pack()
+    else:
+        
+        playbutton.configure(text = "Play", command = startgame, font = ("Courier New",20))
+selection()
+def resetgame():
+    global showp1text
+    global showp2text
+    global showp1
+    global showp2
+    global showroottxt
+    global showstring
+    global retrybutton 
+    global playeroptions
+    global win
+    showp1text.configure(text = "")
+    showp2text.configure(text = "")
+    showp1.configure(text = "")
+    showp2.configure(text = "")
+    showroottxt.configure(text = "")
+    showstring.configure(text = "")
+
+    if retrybutton:
+        retrybutton.destroy()
+        retrybutton = None
+    if playeroptions:
+        playeroptions.destroy()
+        playeroptions = None
+    if win:
+        win.destroy() 
+        win = None
+
+    selection()
+
+
+
 # Run App
 app.mainloop()
