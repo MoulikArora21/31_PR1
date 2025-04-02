@@ -478,15 +478,13 @@ def startgame():
 
 
         if intturn == 1 :
-            firstturn = True
             while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
 
                 generate_list(root)
 
                 x = player_move(root)
-                if x is not None:
-                    minmax(x,actual_root)
-                    
+
+                minmax(x,actual_root)
                 if x is None:
                     break
                 elif not x.children:
