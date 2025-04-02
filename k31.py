@@ -31,7 +31,7 @@ playbutton = None
 win = None
 def setalgo(choice):
     global intalgo
-    if choice is "MinMax":
+    if choice == "MiniMax":
         intalgo = 1
         # print(intalgo)
     else:
@@ -45,7 +45,7 @@ def set_lenstr(value):
     # print(lenstr)
 
 
-algo = customtkinter.CTkComboBox(app,values=["MinMax","AlphaBeta"], command=setalgo)
+algo = customtkinter.CTkComboBox(app,values=["MiniMax","AlphaBeta"], command=setalgo)
 algo.set("Select")
 algo.pack()
 
@@ -244,7 +244,7 @@ def startgame():
         return child
     global max_depth
 
-    max_depth =4
+    max_depth = 4
 
     def generate_list(curr_node):
         global turn
@@ -273,7 +273,7 @@ def startgame():
 
 
             generate_list(child)
-            print(f"Current Node: {curr_node.value}, Generated Child Node: {child.value}")
+            #print(f"Current Node: {curr_node.value}, Generated Child Node: {child.value}")
 
         return
 
@@ -306,19 +306,19 @@ def startgame():
                                 if y.heuristic>maxh:
                                     maxh = y.heuristic
                             x.heuristic = maxh
-                    print("maximizing",x.value , x.heuristic)
+                    #print("maximizing",x.value , x.heuristic)
                     maxh2 = float('inf')
                     for x in w.children:
                         if x.heuristic<maxh2:
                             maxh2 = x.heuristic
                     w.heuristic = maxh2
-                print("minimizing",w.value , w.heuristic)
+                #print("minimizing",w.value , w.heuristic)
             maxh3 = -float('inf')
             for w in node.children:
                 if w.heuristic>maxh3:
                     maxh3 = w.heuristic
             node.heuristic = maxh3
-            print("maximizing",node.value , node.heuristic)
+            #print("maximizing",node.value , node.heuristic)
         else:
             if not node.children:
                 node.add_heuristic()
@@ -468,7 +468,7 @@ def startgame():
     def generate_further(node,root):
         global max_depth
         global intturn
-        max_depth +=4
+        max_depth += 4
         generate_list(node)
         minmax(node,root)
         return node
