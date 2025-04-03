@@ -813,13 +813,15 @@ def resetgame():
     global playeroptions
     global win
     global intturn_var
+    global turnbutton1
+    global turnbutton2
     showp1text.configure(text = "")
     showp2text.configure(text = "")
     showp1.configure(text = "")
     showp2.configure(text = "")
     showroottxt.configure(text = "")
     showstring.configure(text = "")
-    intturn_var = tkinter.IntVar(value=-1)
+    intturn_var.set(-1)
     
 
     if retrybutton:
