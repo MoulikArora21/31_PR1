@@ -301,11 +301,16 @@ def startgame():
                         if not x.children:
                             x.add_heuristic()
                         else:
-                            maxh = -float('inf')
-                            for y in x.children:
-                                if y.heuristic>maxh:
-                                    maxh = y.heuristic
-                            x.heuristic = maxh
+                            # for z in x.children:
+                            #     if not z.children:
+                            #         z.add_heuristic()
+                            #         else:
+
+                                maxh = -float('inf')
+                                for y in x.children:
+                                    if y.heuristic>maxh:
+                                        maxh = y.heuristic
+                                x.heuristic = maxh
                     #print("maximizing",x.value , x.heuristic)
                     maxh2 = float('inf')
                     for x in w.children:
@@ -350,6 +355,23 @@ def startgame():
             node.heuristic = maxh3
             # print("minimizing",node.value , node.heuristic)
                             
+
+    # def minmax2(node,root):
+    #     if node.value["Depth"] == 0 or not node.children:
+    #         return node.add_heuristic()
+    #     if (len(node.value["StateString"])%2 != len(root.value["StateString"])%2):
+    #         value = -float('inf')
+    #         for child in node.children:
+    #             value = max(value, minmax2(child,root))
+    #         return value
+    #     else:
+    #         value = float('inf')
+    #         for child in node.children:
+    #             value = min(value, minmax2(child,root))
+    #         return value
+
+
+
 
     def minmax(node,root):
         print("Executing Minmax")
