@@ -1,7 +1,7 @@
 import random
 import tkinter
 import customtkinter
-
+import time
 
 # UI System Settings
 customtkinter.set_appearance_mode("System")
@@ -17,6 +17,9 @@ app.title("Game")
 title = customtkinter.CTkLabel(app,text = "Select Algorithm:", font = ("Courier New",20))
 title.pack()
 
+
+movetime = []
+moves = 0  
 intalgo = None
 lenstr = None
 intturn = None
@@ -61,7 +64,7 @@ txtlength.pack()
 txtlengthturn = customtkinter.CTkLabel(app,text="Choose Turn:", font = ("Courier New",20))
 txtlengthturn.pack()
 
-intturn_var = tkinter.IntVar(value=0)
+intturn_var = tkinter.IntVar(value=-1)
 
 def set_intturn():
     global intturn
@@ -84,15 +87,20 @@ playerchoice = tkinter.IntVar()
 
 # lenstr = int(input("Length of the string of numbers: "))
 
-
+avg_time = None
 
 
 
 
 def startgame():
+    
+    global avg_time
     global lenstr
     global intturn
     global intalgo
+    global nodes_visited 
+    avg_time = 0
+    nodes_visited = 0
     rand_list = []
     x = 0
     for x in range(int(lenstr)):
@@ -144,9 +152,9 @@ def startgame():
                 self.heuristic=hv
                 print(f"Assigned heuristic {hv} to {self.value}")
             else:
-                if((self.value["P1Score"] - self.value["P2Score"]) < 0):
+                if((self.value["P1Score"] < self.value["P2Score"])):
                     if intturn == 1:
-                        self.heuristic = -1
+                        self.heuristic = 1
                     else:
                         self.heuristic = 1
                 elif(self.value["P1Score"] - self.value["P2Score"] == 0):
@@ -281,23 +289,30 @@ def startgame():
 
 
     def add_heuristic_to_leaves(root):
+        global nodes_visited
         for w in root.children:
             for x in w.children:
                 for y in x.children:
+                    nodes_visited+=1
                     y.add_heuristic()
                     # print(y.value , y.heuristic)
 
 
     def propagate(node,root):
+        global nodes_visited
+        nodes_visited+=1
         if(len(node.value["StateString"])%2 != len(root.value["StateString"])%2):
+            nodes_visited+=1
             if not node.children:
                 node.add_heuristic()
                 return
             for w in node.children:
+                nodes_visited+=1
                 if not w.children:
                     w.add_heuristic()
                 else:
-                    for x in w.children:
+                    for x in w.children: 
+                        nodes_visited+=1                       
                         if not x.children:
                             x.add_heuristic()
                         else:
@@ -308,48 +323,63 @@ def startgame():
 
                                 maxh = -float('inf')
                                 for y in x.children:
+                                    nodes_visited+=1
                                     if y.heuristic>maxh:
                                         maxh = y.heuristic
                                 x.heuristic = maxh
                     #print("maximizing",x.value , x.heuristic)
                     maxh2 = float('inf')
                     for x in w.children:
+                        nodes_visited+=1
                         if x.heuristic<maxh2:
                             maxh2 = x.heuristic
                     w.heuristic = maxh2
                 #print("minimizing",w.value , w.heuristic)
             maxh3 = -float('inf')
             for w in node.children:
+                nodes_visited+=1
                 if w.heuristic>maxh3:
                     maxh3 = w.heuristic
             node.heuristic = maxh3
             #print("maximizing",node.value , node.heuristic)
         else:
+            nodes_visited+=1
             if not node.children:
+                nodes_visited+=1
                 node.add_heuristic()
                 return
             for w in node.children:
+                nodes_visited+=1
                 if not w.children:
                     w.add_heuristic()
                 else:
                     for x in w.children:
+                        nodes_visited+=1
                         maxh = float('inf')
                         for y in x.children:
+                            nodes_visited+=1
                             if not x.children:
+                                nodes_visited+=1
                                 x.add_heuristic()
                             else:
                                 if y.heuristic < maxh:
+                                    nodes_visited+=1
                                     maxh = y.heuristic
                         x.heuristic = maxh
                         # print("minimizing",x.value, x.heuristic)
+
                     maxh2 = -float('inf')
                     for x in w.children:
+                        nodes_visited+=1
                         if x.heuristic > maxh2:
                             maxh2 = x.heuristic
+                    nodes_visited+=1
                     w.heuristic = maxh2
                     # print("maximizing",w.value, w.heuristic)
             maxh3 = float('inf')
+            nodes_visited+=1
             for w in node.children:
+                nodes_visited+=1
                 if w.heuristic < maxh3:
                     maxh3 = w.heuristic
             node.heuristic = maxh3
@@ -374,7 +404,10 @@ def startgame():
 
 
     def minmax(node,root):
+        global nodes_visited
+        nodes_visited+=1
         print("Executing Minmax")
+
         add_heuristic_to_leaves(node)
         propagate(node,root)  
 
@@ -383,9 +416,19 @@ def startgame():
 
     def computer_move(node):
         global win
+        global nodes_visited 
+        global movetime
+        global moves
+        global avg_time
+
+       
+
+        starttime = time.time()
         if win is not None:
             win.destroy()
         if node.value["StateString"] == []:
+            print(avg_time)
+            print(nodes_visited)
             if node.value["P1Score"] < node.value["P2Score"]:
                 win = customtkinter.CTkLabel(app, text="Player Wins!", font=("Courier New", 20))
                 win.place(x=290, y=550)
@@ -403,13 +446,24 @@ def startgame():
         if not node.children:
             return None
 
+
+
+ 
+
+
         # if intturn == 0: 
         bestmove = None
         bestheur = float("inf")
         for x in node.children:
+            # if node.heuristic == x.heuristic:
+            #     bestmove = x
             if x.heuristic < bestheur:
                 bestheur = x.heuristic
                 bestmove = x
+                
+        if bestmove is None:
+            return
+       
         # else:  
         #     bestmove = None
         #     bestheur = float("inf")
@@ -418,10 +472,23 @@ def startgame():
         #             bestheur = x.heuristic
         #             bestmove = x
 
+
+
+
+        endtime = time.time()
+        movedura = endtime - starttime
+        movetime.append(movedura)
+        moves += 1
+
+        if movetime:
+            avg_time = sum(movetime) / len(movetime)
+    
         showp1.configure(text=bestmove.value["P1Score"])
         showp2.configure(text=bestmove.value["P2Score"])
         showstring.configure(text=bestmove.value["StateString"])
-        print(f"Computer chose: {bestmove.value}, Heuristic: {bestheur}")
+        print(f"Computer chose: {bestmove.value}, Heuristic: {node.heuristic}")
+
+
         return bestmove
     
     
@@ -431,15 +498,19 @@ def startgame():
         playerchoice.set(int(value))
             
     def player_move(node):
+        global avg_time
         global playerchoice
         global playeroptions
         global win
+        global nodes_visited 
         if win is not None:
             win.destroy()
         if (node.value["StateString"] == []):
+            print(avg_time)
             playeroptions.set("") 
             # if win:
             #     win.destroy() 
+            print(nodes_visited)
             if node.value["P1Score"] < node.value["P2Score"]:
                 win=customtkinter.CTkLabel(app, text = "Player Wins!", font = ("Courier New",20))
                 win.place(x=290,y=550)
@@ -625,62 +696,49 @@ def startgame():
         #                     else:
         #                         go_to_depth(parent_node,parent_node.value["Depth"])
 
-
-
         def alphabeta(node, alpha, beta):
-            print("Executing Alpha Beta")
+            global nodes_visited
+            nodes_visited += 1
+            print(intturn)
             if not node.children:
                 node.add_heuristic()
                 node.evaluated = True
                 return node.heuristic
 
-            # if intturn == 0:
-            #     max_heu = -float("inf")
-            #     for child in node.children:
-            #         heu = alphabeta(child, alpha, beta)
-            #         max_heu = max(max_heu, heu)
-            #         alpha = max(alpha, heu)
-            #         if beta <= alpha:
-            #             break
-            #     node.heuristic = max_heu
-            #     node.evaluated = True
-            #     return max_heu
-            if  intturn == 0: #and  len(node.value["StateString"])%2 == len(actual_root.value["StateString"])%2:
+            if intturn == 0:
                 min_heu = float("inf")
                 for child in node.children:
                     heu = alphabeta(child, alpha, beta)
                     min_heu = min(min_heu, heu)
                     beta = min(beta, heu)
                     if beta <= alpha:
+                        print("pruned")
                         break
                 node.heuristic = min_heu
                 node.evaluated = True
                 return min_heu
+            elif intturn == 1:
+                if len(node.value["StateString"]) % 2 == len(actual_root.value["StateString"]) % 2:
+                    value = -float('inf')
+                    for child in node.children:
+                        value = max(value, alphabeta(child, alpha, beta))
+                        alpha = max(alpha, value)
+                        if beta <= alpha:
+                            break
+                    node.heuristic = value
+                    node.evaluated = True
+                    return value
+                else:
+                    value = float('inf')
+                    for child in node.children:
+                        value = min(value, alphabeta(child, alpha, beta))
+                        beta = min(beta, value)
+                        if beta <= alpha:
+                            break
+                    node.heuristic = value
+                    node.evaluated = True
+                    return value
 
-            # if intturn == 1 and  len(node.value["StateString"])%2 != len(actual_root.value["StateString"])%2:
-            #     min_heu = float("inf")
-            #     for child in node.children:
-            #         heu = alphabeta(child, alpha, beta)
-            #         min_heu = min(min_heu, heu)
-            #         beta = min(beta, heu)
-            #         if beta <= alpha:
-            #             break
-            #     node.heuristic = min_heu
-            #     node.evaluated = True
-            #     return min_heu
-
-
-            else: #intturn == 1 and len(node.value["StateString"])%2 == len(actual_root.value["StateString"])%2:
-                max_heu = -float("inf")
-                for child in node.children:
-                    heu = alphabeta(child, alpha, beta)
-                    max_heu = max(max_heu, heu)
-                    alpha = max(alpha, heu)
-                    if beta <= alpha:
-                        break
-                node.heuristic = max_heu
-                node.evaluated = True
-                return max_heu
 
         def generate_further2(node,root):
             global max_depth
@@ -754,12 +812,15 @@ def resetgame():
     global retrybutton 
     global playeroptions
     global win
+    global intturn_var
     showp1text.configure(text = "")
     showp2text.configure(text = "")
     showp1.configure(text = "")
     showp2.configure(text = "")
     showroottxt.configure(text = "")
     showstring.configure(text = "")
+    intturn_var = tkinter.IntVar(value=-1)
+    
 
     if retrybutton:
         retrybutton.destroy()
