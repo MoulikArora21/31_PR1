@@ -135,7 +135,7 @@ def startgame():
                         hv +=1
 
                     if values%3 == 0:
-                        hv +=1
+                        hv += 1
 
                     if values%4 == 0:
                         hv += 2
@@ -286,7 +286,7 @@ def startgame():
         return
 
     # generate_list(root) 
-
+        
 
     def add_heuristic_to_leaves(root):
         global nodes_visited
@@ -301,88 +301,88 @@ def startgame():
     def propagate(node,root):
         global nodes_visited
         nodes_visited+=1
-        if(len(node.value["StateString"])%2 != len(root.value["StateString"])%2):
+        # if intturn == 1:
+        #     nodes_visited+=1
+        #     if not node.children:
+        #         node.add_heuristic()
+        #         return
+        #     for w in node.children:
+        #         nodes_visited+=1
+        #         if not w.children:
+        #             w.add_heuristic()
+        #         else:
+        #             for x in w.children: 
+        #                 nodes_visited+=1                       
+        #                 if not x.children:
+        #                     x.add_heuristic()
+        #                 else:
+        #                     # for z in x.children:
+        #                     #     if not z.children:
+        #                     #         z.add_heuristic()
+        #                     #         else:
+
+        #                         maxh = -float('inf')
+        #                         for y in x.children:
+        #                             nodes_visited+=1
+        #                             if y.heuristic>maxh:
+        #                                 maxh = y.heuristic
+        #                         x.heuristic = maxh
+        #             #print("maximizing",x.value , x.heuristic)
+        #             maxh2 = float('inf')
+        #             for x in w.children:
+        #                 nodes_visited+=1
+        #                 if x.heuristic<maxh2:
+        #                     maxh2 = x.heuristic
+        #             w.heuristic = maxh2
+        #         #print("minimizing",w.value , w.heuristic)
+        #     maxh3 = -float('inf')
+        #     for w in node.children:
+        #         nodes_visited+=1
+        #         if w.heuristic>maxh3:
+        #             maxh3 = w.heuristic
+        #     node.heuristic = maxh3
+        #     #print("maximizing",node.value , node.heuristic)
+        # else:
+        nodes_visited+=1
+        if not node.children:
             nodes_visited+=1
-            if not node.children:
-                node.add_heuristic()
-                return
-            for w in node.children:
-                nodes_visited+=1
-                if not w.children:
-                    w.add_heuristic()
-                else:
-                    for x in w.children: 
-                        nodes_visited+=1                       
+            node.add_heuristic()
+            return
+        for w in node.children:
+            nodes_visited+=1
+            if not w.children:
+                w.add_heuristic()
+            else:
+                for x in w.children:
+                    nodes_visited+=1
+                    maxh = float('inf')
+                    for y in x.children:
+                        nodes_visited+=1
                         if not x.children:
+                            nodes_visited+=1
                             x.add_heuristic()
                         else:
-                            # for z in x.children:
-                            #     if not z.children:
-                            #         z.add_heuristic()
-                            #         else:
-
-                                maxh = -float('inf')
-                                for y in x.children:
-                                    nodes_visited+=1
-                                    if y.heuristic>maxh:
-                                        maxh = y.heuristic
-                                x.heuristic = maxh
-                    #print("maximizing",x.value , x.heuristic)
-                    maxh2 = float('inf')
-                    for x in w.children:
-                        nodes_visited+=1
-                        if x.heuristic<maxh2:
-                            maxh2 = x.heuristic
-                    w.heuristic = maxh2
-                #print("minimizing",w.value , w.heuristic)
-            maxh3 = -float('inf')
-            for w in node.children:
-                nodes_visited+=1
-                if w.heuristic>maxh3:
-                    maxh3 = w.heuristic
-            node.heuristic = maxh3
-            #print("maximizing",node.value , node.heuristic)
-        else:
-            nodes_visited+=1
-            if not node.children:
-                nodes_visited+=1
-                node.add_heuristic()
-                return
-            for w in node.children:
-                nodes_visited+=1
-                if not w.children:
-                    w.add_heuristic()
-                else:
-                    for x in w.children:
-                        nodes_visited+=1
-                        maxh = float('inf')
-                        for y in x.children:
-                            nodes_visited+=1
-                            if not x.children:
+                            if y.heuristic < maxh:
                                 nodes_visited+=1
-                                x.add_heuristic()
-                            else:
-                                if y.heuristic < maxh:
-                                    nodes_visited+=1
-                                    maxh = y.heuristic
-                        x.heuristic = maxh
+                                maxh = y.heuristic
+                    x.heuristic = maxh
                         # print("minimizing",x.value, x.heuristic)
 
-                    maxh2 = -float('inf')
-                    for x in w.children:
-                        nodes_visited+=1
-                        if x.heuristic > maxh2:
-                            maxh2 = x.heuristic
+                maxh2 = -float('inf')
+                for x in w.children:
                     nodes_visited+=1
-                    w.heuristic = maxh2
-                    # print("maximizing",w.value, w.heuristic)
-            maxh3 = float('inf')
-            nodes_visited+=1
-            for w in node.children:
+                    if x.heuristic > maxh2:
+                        maxh2 = x.heuristic
                 nodes_visited+=1
-                if w.heuristic < maxh3:
-                    maxh3 = w.heuristic
-            node.heuristic = maxh3
+                w.heuristic = maxh2
+                    # print("maximizing",w.value, w.heuristic)
+        maxh3 = float('inf')
+        nodes_visited+=1
+        for w in node.children:
+            nodes_visited+=1
+            if w.heuristic < maxh3:
+                maxh3 = w.heuristic
+        node.heuristic = maxh3
             # print("minimizing",node.value , node.heuristic)
                             
 
@@ -457,7 +457,7 @@ def startgame():
         for x in node.children:
             # if node.heuristic == x.heuristic:
             #     bestmove = x
-            if x.heuristic < bestheur:
+            if x.heuristic < bestheur: 
                 bestheur = x.heuristic
                 bestmove = x
                 
@@ -705,40 +705,42 @@ def startgame():
                 node.evaluated = True
                 return node.heuristic
 
-            if intturn == 0:
-                min_heu = float("inf")
+            # if intturn == 0:
+            #     min_heu = float("inf")
+            #     for child in node.children:
+            #         heu = alphabeta(child, alpha, beta)
+            #         min_heu = min(min_heu, heu)
+            #         beta = min(beta, heu)
+            #         if beta <= alpha:
+            #             print("pruned")
+            #             break
+            #     node.heuristic = min_heu
+            #     node.evaluated = True
+            #     return min_heu
+            # elif intturn == 1:
+            if len(node.value["StateString"]) % 2 == len(actual_root.value["StateString"]) % 2:
+                value = float('inf')
                 for child in node.children:
-                    heu = alphabeta(child, alpha, beta)
-                    min_heu = min(min_heu, heu)
-                    beta = min(beta, heu)
+                    value = min(value, alphabeta(child, alpha, beta))
+                    beta = min(beta, value)
                     if beta <= alpha:
                         print("pruned")
                         break
-                node.heuristic = min_heu
+                node.heuristic = value
                 node.evaluated = True
-                return min_heu
-            elif intturn == 1:
-                if len(node.value["StateString"]) % 2 == len(actual_root.value["StateString"]) % 2:
-                    value = -float('inf')
-                    for child in node.children:
-                        value = max(value, alphabeta(child, alpha, beta))
-                        alpha = max(alpha, value)
-                        if beta <= alpha:
-                            break
-                    node.heuristic = value
-                    node.evaluated = True
-                    return value
-                else:
-                    value = float('inf')
-                    for child in node.children:
-                        value = min(value, alphabeta(child, alpha, beta))
-                        beta = min(beta, value)
-                        if beta <= alpha:
-                            break
-                    node.heuristic = value
-                    node.evaluated = True
-                    return value
+                return value
+            else:
 
+                value = -float('inf')
+                for child in node.children:
+                    value = max(value, alphabeta(child, alpha, beta))
+                    alpha = max(alpha, value)
+                    if beta <= alpha:
+                        print("pruned")
+                        break
+                node.heuristic = value
+                node.evaluated = True
+                return value
 
         def generate_further2(node,root):
             global max_depth
@@ -754,14 +756,16 @@ def startgame():
             while root is not None or root.value["StateString"] != [] or root.children !=[] or x.children !=[]:
                     generate_list(root)
                     x = player_move(root)
-                    alphabeta(root,-float("inf"), float("inf"))
                     if x is None:
                         break
+                    
+
                     elif not x.children:
                         a = generate_further2(x,actual_root)
                         x = a
                         root = a
                         continue
+                    alphabeta(x,-float("inf"), float("inf"))
                     root = computer_move(x)
                     if root is None:
                         break
